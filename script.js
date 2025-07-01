@@ -401,15 +401,9 @@ let html = `
     </div>
   `;
 
-<<<<<<< HEAD
   // Add this at the end of the html content before setting container.innerHTML
 
 html += `
-=======
-  container.innerHTML = `<div class="results-section">${html}</div>`;
-
-  html += `
->>>>>>> 36253fe (total employee updated)
   <hr>
   <div class="form-row">
     <div class="form-group">
@@ -421,13 +415,10 @@ html += `
 
 container.innerHTML = `<div class="results-section">${html}</div>`;
 calculateTotalEmployees(hookIndex); // Call to update on first load
-<<<<<<< HEAD
 calculateGrandTotalEmployees();
 
 
   //container.innerHTML = `<div class="results-section">${html}</div>`;
-=======
->>>>>>> 36253fe (total employee updated)
 }
 
 
@@ -460,7 +451,6 @@ function updateFinalIncentive(roleId, incentive) {
 
 }
 
-<<<<<<< HEAD
 
 function toggleAbsentFields(hookIndex) {
   const container = document.getElementById(`employee_incentive_results_${hookIndex}`);
@@ -504,8 +494,6 @@ function calculateResults1(hookIndex) {
   resultsDiv.style.display = "block";
 }
 
-=======
->>>>>>> 36253fe (total employee updated)
 function calculateTotalEmployees(hookIndex) {
   const roles = [
     "Tindal per vessel on board",
@@ -532,7 +520,6 @@ function calculateTotalEmployees(hookIndex) {
   if (totalField) totalField.value = total.toFixed(0);
 }
 
-<<<<<<< HEAD
 function calculateGrandTotalEmployees() {
   const hookCount = parseInt(document.getElementById("hookCount").value) || 0;
   let totalEmployees = 0;
@@ -560,7 +547,3 @@ function calculateGrandTotalEmployees() {
     grandField.value = "";
   }
 }
-
-
-=======
->>>>>>> 36253fe (total employee updated)
