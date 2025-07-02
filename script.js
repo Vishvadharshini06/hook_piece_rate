@@ -62,7 +62,6 @@ function generateHookFields() {
           <div id="calc_results_${i}" style="display: none;"></div>
           <div id="earnings_results_${i}" style="display: none;"></div>
           <div id="employee_incentive_results_${i}" style="display: none;"></div>
-
         </div>
       `;
       } else {
@@ -413,6 +412,16 @@ html += `
   </div>
 `;
 
+html += `
+  <div class="form-row">
+    <div class="form-group">
+      <button type="button" onclick="showAccountingSummary(${hookIndex})">ACCOUNTING OF PIECE RATE EARNINGS</button>
+    </div>
+  </div>
+  <div id="accounting_summary_${hookIndex}" style="display: none;"></div>
+`;
+
+
 container.innerHTML = `<div class="results-section">${html}</div>`;
 calculateTotalEmployees(hookIndex); // Call to update on first load
 calculateGrandTotalEmployees();
@@ -538,6 +547,13 @@ function calculateGrandTotalEmployees() {
 
   const grandDiv = document.getElementById("grandTotalEmployees");
   const grandField = document.getElementById("grand_total_employees");
+  document.getElementById("grandTotalEmployees").insertAdjacentHTML("afterend", `
+  <div id="grandTotalEarningsContainer" style="display: none; margin-top: 20px;">
+    <button type="button" onclick="calculateTotalEarnings()">TOTAL EARNINGS</button>
+    <div id="grandTotalEarnings" style="margin-top: 10px;"></div>
+  </div>
+  `);
+
 
   if (allSectionsVisible && totalEmployees > 0) {
     grandDiv.style.display = "block";
@@ -546,4 +562,130 @@ function calculateGrandTotalEmployees() {
     grandDiv.style.display = "none";
     grandField.value = "";
   }
+
+  const earningsContainer = document.getElementById("grandTotalEarningsContainer");
+  
+if (allSectionsVisible && totalEmployees > 0) {
+  grandDiv.style.display = "block";
+  grandField.value = totalEmployees;
+  document.getElementById("grandTotalEarningsContainer").style.display = "block";  // ✅ show earnings button
+} else {
+  grandDiv.style.display = "none";
+  grandField.value = "";
+  document.getElementById("grandTotalEarningsContainer").style.display = "none";   // ✅ hide if invalid
 }
+}
+
+function showAccountingSummary(hookIndex) {
+  const roles = [
+    { label: "Tindal per vessel on board", type: "onBoard" },
+    { label: "Maistry per vessel on Shore", type: "onShore" },
+    { label: "Winch driver per hook on board", type: "onBoard" },
+    { label: "Signal Man per hook on board", type: "onBoard" },
+    { label: "Mazdoor per hook on board", type: "onBoard" },
+    { label: "Tally clerk per hook on Shore", type: "onShore" },
+    { label: "Mazdoor per hook on Shore", type: "onShore" },
+    { label: "DECD per hook on Shore", type: "onShore" },
+  ];
+
+  let onBoardTotal = 0;
+  let onShoreTotal = 0;
+
+  for (const role of roles) {
+    const roleId = role.label.replace(/[^a-zA-Z0-9]/g, "_") + "_" + hookIndex;
+    const count = parseFloat(document.getElementById(`count_${roleId}`)?.value || 0);
+    const absent = parseFloat(document.getElementById(`absent_${roleId}`)?.value || 0);
+    const incentive = parseFloat(document.getElementById(`incentive_${roleId}`)?.value || 0);
+
+    const present = Math.max(count - absent, 0);
+    const total = present * incentive;
+
+    if (role.type === "onBoard") onBoardTotal += total;
+    else if (role.type === "onShore") onShoreTotal += total;
+  }
+
+  const hookTotal = onBoardTotal + onShoreTotal;
+
+  const container = document.getElementById(`accounting_summary_${hookIndex}`);
+  container.innerHTML = `
+    <div class="results-section">
+      <h4>Accounting of Piece Rate Earnings - Hook ${hookIndex}</h4>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Total On Board Earnings/Chargeable:</label>
+          <input type="number" value="${onBoardTotal.toFixed(2)}" readonly>
+        </div>
+        <div class="form-group">
+          <label>Total On Shore Earnings:</label>
+          <input type="number" value="${onShoreTotal.toFixed(2)}" readonly>
+        </div>
+        <div class="form-group">
+          <label><strong>Total Earnings for Hook ${hookIndex}:</strong></label>
+          <input type="number" value="${hookTotal.toFixed(2)}" readonly>
+        </div>
+      </div>
+    </div>
+  `;
+
+  container.style.display = "block";
+}
+
+
+function calculateTotalEarnings() {
+  const hookCount = parseInt(document.getElementById("hookCount").value) || 0;
+  let totalOnBoard = 0;
+  let totalOnShore = 0;
+
+  for (let i = 1; i <= hookCount; i++) {
+    const hookVisible = document.getElementById(`employee_incentive_results_${i}`);
+    if (!hookVisible || hookVisible.style.display !== "block") continue;
+
+    const roles = [
+      { label: "Tindal per vessel on board", type: "onBoard" },
+      { label: "Maistry per vessel on Shore", type: "onShore" },
+      { label: "Winch driver per hook on board", type: "onBoard" },
+      { label: "Signal Man per hook on board", type: "onBoard" },
+      { label: "Mazdoor per hook on board", type: "onBoard" },
+      { label: "Tally clerk per hook on Shore", type: "onShore" },
+      { label: "Mazdoor per hook on Shore", type: "onShore" },
+      { label: "DECD per hook on Shore", type: "onShore" }
+    ];
+
+    for (const role of roles) {
+      const roleId = role.label.replace(/[^a-zA-Z0-9]/g, "_") + "_" + i;
+      const count = parseFloat(document.getElementById(`count_${roleId}`)?.value || 0);
+      const absent = parseFloat(document.getElementById(`absent_${roleId}`)?.value || 0);
+      const incentive = parseFloat(document.getElementById(`incentive_${roleId}`)?.value || 0);
+      const present = Math.max(count - absent, 0);
+      const earning = present * incentive;
+
+      if (role.type === "onBoard") totalOnBoard += earning;
+      else if (role.type === "onShore") totalOnShore += earning;
+    }
+  }
+
+  const total = totalOnBoard + totalOnShore;
+  const displayDiv = document.getElementById("grandTotalEarnings");
+  displayDiv.innerHTML = `
+    <div class="results-section">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Total On Board Earnings/Chargeable:</label>
+          <input type="number" value="${totalOnBoard.toFixed(2)}" readonly>
+        </div>
+        <div class="form-group">
+          <label>Total On Shore Earnings:</label>
+          <input type="number" value="${totalOnShore.toFixed(2)}" readonly>
+        </div>
+      </div>
+      <hr>
+      <div class="form-row">
+        <div class="form-group">
+          <label><strong>Grand Total Earnings:</strong></label>
+          <input type="number" value="${total.toFixed(2)}" readonly>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
