@@ -38,8 +38,7 @@ chennai-port-calculator/
 1. Clone this repository
 2. Open `index.html` in a web browser
 3. No server requirements - runs completely client-side
-or 
-1. Use below link to deploy project 
+1. Or Use below link to deploy project 
 https://vishvadharshini06.github.io/hook_piece_rate/
 
 ## Usage
