@@ -547,13 +547,18 @@ function calculateGrandTotalEmployees() {
 
   const grandDiv = document.getElementById("grandTotalEmployees");
   const grandField = document.getElementById("grand_total_employees");
-  document.getElementById("grandTotalEmployees").insertAdjacentHTML("afterend", `
-  <div id="grandTotalEarningsContainer" style="display: none; margin-top: 20px;">
-    <button type="button" onclick="calculateTotalEarnings()">TOTAL EARNINGS</button>
-    <div id="grandTotalEarnings" style="margin-top: 10px;"></div>
-  </div>
-  `);
+// 🔧 Only insert if not already added
+let earningsContainer = document.getElementById("grandTotalEarningsContainer");
 
+if (!earningsContainer) {
+  document.getElementById("grandTotalEmployees").insertAdjacentHTML("afterend", `
+    <div id="grandTotalEarningsContainer" style="display: none; margin-top: 20px;">
+      <button type="button" onclick="calculateTotalEarnings()">TOTAL EARNINGS</button>
+      <div id="grandTotalEarnings" style="margin-top: 10px;"></div>
+    </div>
+  `);
+  earningsContainer = document.getElementById("grandTotalEarningsContainer"); // re-assign after creation
+}
 
   if (allSectionsVisible && totalEmployees > 0) {
     grandDiv.style.display = "block";
@@ -688,4 +693,3 @@ function calculateTotalEarnings() {
     </div>
   `;
 }
-
