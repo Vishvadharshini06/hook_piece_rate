@@ -732,14 +732,16 @@ function exportToExcel() {
         if (!workbook.Sheets["Prediction"]) {
           predictionData.push([
             "Date", "VESSEL NAME", "SHIFT", "VCN NO", "A/I SHIFT", 
-            "Number of Hooks", "No of Slings", "Per Sling", "Total Tons",
-            "Grand Total Employees"
+            "Number of Hooks", "No of Slings", "Per Sling", "Total Tons"
           ]);
         } else {
           // Get existing data if sheet exists
           const existingData = XLSX.utils.sheet_to_json(workbook.Sheets["Prediction"], { header: 1 });
           predictionData.push(...existingData);
         }
+        
+        // Add empty row before new data
+        predictionData.push(Array(9).fill(""));
         
         // Add new data for each hook
         for (let i = 1; i <= hookCount; i++) {
@@ -749,7 +751,7 @@ function exportToExcel() {
           
           predictionData.push([
             date, vesselName, shift, vcnNo, aiShift, 
-            i, slings, perSling, totalTons, grandTotalEmployees
+            i, slings, perSling, totalTons
           ]);
         }
         
@@ -789,6 +791,9 @@ function exportToExcel() {
         let grandOnBoard = 0;
         let grandOnShore = 0;
         let grandTotal = 0;
+        
+        // Add empty row before new data
+        planningData.push(Array(23).fill(""));
         
         // Add new data for each hook
         for (let i = 1; i <= hookCount; i++) {
@@ -844,16 +849,35 @@ function exportToExcel() {
           ]);
         }
         
-        // Add a blank row before the summary
-        planningData.push([]);
+        // Add empty rows before the summary
+        planningData.push(Array(23).fill(""));
+        planningData.push(Array(23).fill(""));
         
         // Add grand total summary rows
-        planningData.push(["GRAND TOTAL SUMMARY"]);
-        planningData.push(["Grand Total Employees:", grandTotalEmployees]);
-        planningData.push(["Grand Total On Board Earnings:", grandOnBoard.toFixed(2)]);
-        planningData.push(["Grand Total On Shore Earnings:", grandOnShore.toFixed(2)]);
-        planningData.push(["Grand Total Earnings:", grandTotal.toFixed(2)]);
-        planningData.push([]);
+        const summaryRow1 = Array(23).fill("");
+        summaryRow1[0] = "GRAND TOTAL SUMMARY";
+        planningData.push(summaryRow1);
+        
+        const summaryRow2 = Array(23).fill("");
+        summaryRow2[0] = "Grand Total Employees:";
+        summaryRow2[1] = grandTotalEmployees;
+        planningData.push(summaryRow2);
+        
+        const summaryRow3 = Array(23).fill("");
+        summaryRow3[0] = "Grand Total On Board Earnings:";
+        summaryRow3[1] = grandOnBoard.toFixed(2);
+        planningData.push(summaryRow3);
+        
+        const summaryRow4 = Array(23).fill("");
+        summaryRow4[0] = "Grand Total On Shore Earnings:";
+        summaryRow4[1] = grandOnShore.toFixed(2);
+        planningData.push(summaryRow4);
+        
+        const summaryRow5 = Array(23).fill("");
+        summaryRow5[0] = "Grand Total Earnings:";
+        summaryRow5[1] = grandTotal.toFixed(2);
+        planningData.push(summaryRow5);
+        
         // Update or add planning sheet
         const planningWS = XLSX.utils.aoa_to_sheet(planningData);
         if (workbook.Sheets["Planning"]) {
@@ -864,7 +888,7 @@ function exportToExcel() {
       }
       
       // Generate Excel file
-      XLSX.writeFile(workbook, `Hook_Piece_Rate_data.xlsx`);
+      XLSX.writeFile(workbook, `Hook_Piece_Rate_${date || "data"}.xlsx`);
       
     } catch (error) {
       console.error("Error processing Excel file:", error);

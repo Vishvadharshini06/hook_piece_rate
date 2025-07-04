@@ -1,72 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About - Chennai Port Authority</title>
-  <link rel="stylesheet" href="style.css"/>
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
   <link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
   <link rel="icon" type="image/png" sizes="180x180" href="favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Header -->
   <div class="header">
     <div class="logo-container">
-      <img src="cpa_logo.jpg" alt="Chennai Port Authority Logo" class="logo-img" />
+      <img src="cpa_logo.jpg" alt="Chennai Port Authority Logo" class="logo-img">
       <div class="logo-text">CHENNAI PORT AUTHORITY</div>
     </div>
     <div class="header-right">
       <a href="index.html">Home</a>
-      <a href="contact.html">Contact</a>
+      <a href="https://www.chennaiport.gov.in/contact-us">Contact</a>
       <a class="active" href="about.html">About</a>
     </div>
   </div>
 
-  <!-- Main Container -->
   <div class="container">
-    <div class="form-title">ABOUT THIS APPLICATION</div>
-
+    <div class="form-title">ABOUT HOOK PIECE RATE CALCULATOR</div>
+    
     <div class="form-section">
-      <p style="margin-bottom: 20px;">
-        This web application was developed for the Chennai Port Authority to streamline and automate the calculation of hook-based piece rate incentives for dock workers. It enables accurate and efficient handling of planning and prediction operations by incorporating real-time input fields and structured rate band calculations.
-      </p>
-
-      <div class="section-title">Key Features</div>
-      <ul style="padding-left: 25px; margin-bottom: 20px;">
-        <li>Responsive, user-friendly interface optimized for desktop and mobile.</li>
-        <li>Supports both Prediction and Planning modes of calculation.</li>
-        <li>Auto-fetch and compute values based on line data from a master dataset.</li>
-        <li>Breakdown of earnings by incentive bands (101–150%, 151–200%, Above 200%).</li>
-        <li>Export-ready results display for recordkeeping or reporting.</li>
-      </ul>
-
-      <div class="section-title">Technology Stack</div>
-      <ul style="padding-left: 25px; margin-bottom: 20px;">
-        <li><strong>Frontend:</strong> HTML, CSS (custom styles), and vanilla JavaScript.</li>
-        <li><strong>Fonts & Icons:</strong> Google Fonts (Roboto).</li>
-        <li><strong>Data Handling:</strong> JSON for dynamic dropdown and calculation reference.</li>
-      </ul>
-
-      <div class="section-title">Project Purpose</div>
-      <p>
-        The goal of this project is to enhance operational transparency, reduce manual effort, and ensure accurate wage calculations in alignment with port regulations and labor agreements.
-      </p>
+      <div class="about-section">
+        <p>This web application was developed for the Chennai Port Authority to streamline and automate the calculation of hook-based piece rate incentives for dock workers.</p>
+        
+        <div class="section-title">Key Features</div>
+        <ul>
+          <li>Supports both Prediction and Planning calculation modes</li>
+          <li>Handles up to 4 hooks simultaneously</li>
+          <li>Automatically calculates piece rate earnings based on tons handled</li>
+          <li>Includes employee incentive breakdowns by role</li>
+          <li>Tracks absenteeism and adjusts calculations accordingly</li>
+          <li>Separates on-board and on-shore earnings</li>
+          <li>Export functionality to Excel for record keeping</li>
+        </ul>
+        
+        <div class="section-title">Technical Details</div>
+        <p>The application uses modern web technologies:</p>
+        <ul>
+          <li><strong>Frontend:</strong> HTML5, CSS3, JavaScript (ES6+)</li>
+          <li><strong>Data:</strong> JSON for hook line configurations</li>
+          <li><strong>Export:</strong> SheetJS library for Excel generation</li>
+          <li><strong>Responsive Design:</strong> Works on desktop and mobile devices</li>
+        </ul>
+        
+        <div class="section-title">Calculation Methodology</div>
+        <p>The system implements the official Chennai Port Authority piece rate formulas:</p>
+        <ul>
+          <li>Calculates PR Earning Tons (Piece Rate Tons - Datum Per Crane)</li>
+          <li>Applies different rates for productivity bands (100-150%, 150-200%, 200%+)</li>
+          <li>Distributes earnings across employee roles (Tindal, Maistry, Winch drivers, etc.)</li>
+          <li>Adjusts for absentees while maintaining total payout amounts</li>
+        </ul>
+        
+        <div class="section-title">Usage Guidelines</div>
+        <ul>
+          <li>Select date and enter vessel details</li>
+          <li>Choose between Prediction or Planning mode</li>
+          <li>Enter the number of hooks (1-4)</li>
+          <li>Fill in the required fields for each hook</li>
+          <li>Use the calculation buttons to generate results</li>
+          <li>Export to Excel when complete</li>
+        </ul>
+      </div>
     </div>
   </div>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="footer-container">
-      <div class="footer-left">
-        <span>&copy; 2025 Chennai Port Authority</span>
-      </div>
-      <div class="footer-right">
-        <a href="#privacy">Privacy Policy</a>
-        <a href="#terms">Terms of Use</a>
+      <div class="footer-center">
+        <span>&copy; 2025 TechTitans</span>
       </div>
     </div>
   </footer>
+  
 </body>
 </html>

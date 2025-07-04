@@ -282,3 +282,29 @@ input[readonly] {
   align-items: center;
   flex-grow: 1;
 }
+/* About Page Styles */
+.about-section {
+  padding: 20px;
+  line-height: 1.6;
+}
+
+.about-section h3 {
+  color: #2c3e50;
+  margin-top: 25px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+.about-section ul, .about-section ol {
+  margin-bottom: 20px;
+  padding-left: 30px;
+}
+
+.about-section li {
+  margin-bottom: 8px;
+}
+
+.about-section p {
+  margin-bottom: 15px;
+}
