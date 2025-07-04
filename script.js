@@ -694,4 +694,183 @@ function calculateTotalEarnings() {
     </div>
   `;
 }
-
+function exportToExcel() {
+  // Get all the input data
+  const date = document.getElementById("myDate").value;
+  const vesselName = document.getElementById("vesselName").value;
+  const shift = document.getElementById("shift").value;
+  const vcnNo = document.getElementById("vcnNo").value;
+  const aiShift = document.getElementById("aiShift").value;
+  const inputType = document.getElementById("inputtype").value;
+  const hookCount = document.getElementById("hookCount").value;
+  const grandTotalEmployees = document.getElementById("grand_total_employees")?.value || "";
+  
+  // Create a file input element to allow selecting existing Excel file
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = '.xlsx,.xls';
+  
+  fileInput.onchange = async (e) => {
+    const file = e.target.files[0];
+    let workbook;
+    
+    try {
+      if (file) {
+        // Read existing file
+        const data = await file.arrayBuffer();
+        workbook = XLSX.read(data);
+      } else {
+        // Create new workbook if no file selected
+        workbook = XLSX.utils.book_new();
+      }
+      
+      if (inputType === "Prediction") {
+        // Prediction data
+        const predictionData = [];
+        
+        // Add header row if sheet doesn't exist
+        if (!workbook.Sheets["Prediction"]) {
+          predictionData.push([
+            "Date", "VESSEL NAME", "SHIFT", "VCN NO", "A/I SHIFT", 
+            "Number of Hooks", "No of Slings", "Per Sling", "Total Tons",
+            "Grand Total Employees"
+          ]);
+        } else {
+          // Get existing data if sheet exists
+          const existingData = XLSX.utils.sheet_to_json(workbook.Sheets["Prediction"], { header: 1 });
+          predictionData.push(...existingData);
+        }
+        
+        // Add new data for each hook
+        for (let i = 1; i <= hookCount; i++) {
+          const slings = document.getElementById(`slings_${i}`)?.value || "";
+          const perSling = document.getElementById(`per_sling_${i}`)?.value || "";
+          const totalTons = document.getElementById(`results_${i}`)?.querySelector("input")?.value || "";
+          
+          predictionData.push([
+            date, vesselName, shift, vcnNo, aiShift, 
+            i, slings, perSling, totalTons, grandTotalEmployees
+          ]);
+        }
+        
+        // Update or add prediction sheet
+        const predictionWS = XLSX.utils.aoa_to_sheet(predictionData);
+        if (workbook.Sheets["Prediction"]) {
+          workbook.Sheets["Prediction"] = predictionWS;
+        } else {
+          XLSX.utils.book_append_sheet(workbook, predictionWS, "Prediction");
+        }
+      }
+      
+      if (inputType === "Planning") {
+        // Planning data
+        const planningData = [];
+        
+        // Add header row if sheet doesn't exist
+        if (!workbook.Sheets["Planning"]) {
+          planningData.push([
+            "Date", "VESSEL NAME", "SHIFT", "VCN NO", "A/I SHIFT", 
+            "Hook Number", "Line No", "Piece Rate Tons", "Datum Per Crane", 
+            "PR Earning Tons", "100-150% (Tons)", "Rate", "Earning", 
+            "150-200% (Tons)", "Rate", "Earning", "Above 200% (Tons)", 
+            "Rate", "Earning", "Total Piece Rate Earning", 
+            "Total Employees (after absentee adjustment)",
+            "On Board Earnings/Chargeable", 
+            "On Shore Earnings",
+            "Hook Total Earnings"
+          ]);
+        } else {
+          // Get existing data if sheet exists
+          const existingData = XLSX.utils.sheet_to_json(workbook.Sheets["Planning"], { header: 1 });
+          planningData.push(...existingData);
+        }
+        
+        // Variables to accumulate grand totals
+        let grandOnBoard = 0;
+        let grandOnShore = 0;
+        let grandTotal = 0;
+        
+        // Add new data for each hook
+        for (let i = 1; i <= hookCount; i++) {
+          const lineNo = document.getElementById(`line_no_${i}`)?.value || "";
+          const pieceRateTons = document.getElementById(`piece_rate_tons_${i}`)?.value || "";
+          
+          const calcResults = document.getElementById(`calc_results_${i}`);
+          const datum = calcResults?.querySelectorAll("input")[0]?.value || "";
+          const prEarningTons = calcResults?.querySelectorAll("input")[1]?.value || "";
+          
+          const earningsResults = document.getElementById(`earnings_results_${i}`);
+          const tons1 = earningsResults?.querySelectorAll("input")[2]?.value || "";
+          const rate1 = earningsResults?.querySelectorAll("input")[3]?.value || "";
+          const earning1 = earningsResults?.querySelectorAll("input")[4]?.value || "";
+          const tons2 = earningsResults?.querySelectorAll("input")[5]?.value || "";
+          const rate2 = earningsResults?.querySelectorAll("input")[6]?.value || "";
+          const earning2 = earningsResults?.querySelectorAll("input")[7]?.value || "";
+          const tons3 = earningsResults?.querySelectorAll("input")[8]?.value || "";
+          const rate3 = earningsResults?.querySelectorAll("input")[9]?.value || "";
+          const earning3 = earningsResults?.querySelectorAll("input")[10]?.value || "";
+          const totalEarning = earningsResults?.querySelectorAll("input")[11]?.value || "";
+          
+          const totalEmployees = document.getElementById(`total_employees_${i}`)?.value || "";
+          
+          // Get accounting summary data for this hook
+          const accountingSummary = document.getElementById(`accounting_summary_${i}`);
+          let onBoard = 0;
+          let onShore = 0;
+          let hookTotal = 0;
+          
+          if (accountingSummary && accountingSummary.style.display === "block") {
+            const inputs = accountingSummary.querySelectorAll("input");
+            onBoard = parseFloat(inputs[0]?.value) || 0;
+            onShore = parseFloat(inputs[1]?.value) || 0;
+            hookTotal = parseFloat(inputs[2]?.value) || 0;
+            
+            // Accumulate grand totals
+            grandOnBoard += onBoard;
+            grandOnShore += onShore;
+            grandTotal += hookTotal;
+          }
+          
+          planningData.push([
+            date, vesselName, shift, vcnNo, aiShift, 
+            i, lineNo, pieceRateTons, datum, 
+            prEarningTons, tons1, rate1, earning1, 
+            tons2, rate2, earning2, tons3, 
+            rate3, earning3, totalEarning, 
+            totalEmployees,
+            onBoard,
+            onShore,
+            hookTotal
+          ]);
+        }
+        
+        // Add a blank row before the summary
+        planningData.push([]);
+        
+        // Add grand total summary rows
+        planningData.push(["GRAND TOTAL SUMMARY"]);
+        planningData.push(["Grand Total Employees:", grandTotalEmployees]);
+        planningData.push(["Grand Total On Board Earnings:", grandOnBoard.toFixed(2)]);
+        planningData.push(["Grand Total On Shore Earnings:", grandOnShore.toFixed(2)]);
+        planningData.push(["Grand Total Earnings:", grandTotal.toFixed(2)]);
+        planningData.push([]);
+        // Update or add planning sheet
+        const planningWS = XLSX.utils.aoa_to_sheet(planningData);
+        if (workbook.Sheets["Planning"]) {
+          workbook.Sheets["Planning"] = planningWS;
+        } else {
+          XLSX.utils.book_append_sheet(workbook, planningWS, "Planning");
+        }
+      }
+      
+      // Generate Excel file
+      XLSX.writeFile(workbook, `Hook_Piece_Rate_data.xlsx`);
+      
+    } catch (error) {
+      console.error("Error processing Excel file:", error);
+      alert("Error processing Excel file. Please try again.");
+    }
+  };
+  
+  fileInput.click();
+}

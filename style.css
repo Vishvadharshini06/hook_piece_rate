@@ -205,8 +205,6 @@ button:hover {
     justify-content: center;
   }
 }
-
-/* Footer Styles */
 .footer {
   background-color: #004a8d;
   color: white;
@@ -262,4 +260,25 @@ button:hover {
 /* Readonly Input Styling */
 input[readonly] {
   background-color: #f0f0f0ba;
+}
+#exportBtn {
+  padding: 8px 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+#exportBtn:hover {
+  background-color: #45a049;
+}
+
+.footer-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
 }
