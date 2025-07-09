@@ -209,7 +209,7 @@ button:hover {
   background-color: #004a8d;
   color: white;
   padding: 5px 30px;
-  position: fixed;
+  position: relative;
   bottom: 0;
   width: 100%;
   box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
